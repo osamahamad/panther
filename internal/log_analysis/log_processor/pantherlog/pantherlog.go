@@ -118,6 +118,8 @@ func (h *logHandler) Run(ctx context.Context) error {
 	if h.ctx != nil {
 		return errors.New("already running")
 	}
+	// Notify consumers that the processing is over
+	defer close(h.results)
 	if ctx == nil {
 		ctx = context.Background()
 	}
