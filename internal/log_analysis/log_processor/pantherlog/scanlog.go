@@ -28,10 +28,14 @@ import (
 	"github.com/panther-labs/panther/internal/log_analysis/log_processor/jsonutil"
 )
 
+// LogScanner handles splitting of files into chunks (lines, json values, other) to hand over to a `LogParser`
+// Implementations should read parseable chunks of the underlying reader and return an io.EOF when the they finish.
+// Any read or parse errors should also be returned when they occur.
 type LogScanner interface {
 	ScanLog() (string, error)
 }
 
+// ScanLogLines is the default LogScanner splitting the input `io.Reader` into lines.
 func ScanLogLines(r io.Reader) LogScanner {
 	if r, ok := r.(*bufio.Reader); ok {
 		return &logScannerLines{
@@ -71,6 +75,7 @@ func (s *logScannerLines) ScanLog() (string, error) {
 	}
 }
 
+// ScanLogJSON scans JSON values from an `io.Reader` regardless of whitespace formatting.
 func ScanLogJSON(r io.Reader) LogScanner {
 	// WARNING: It is VERY IMPORTANT to pass a buffer here. jsoniter has a bug with endless loop.
 	iter := jsoniter.ConfigFastest.BorrowIterator(make([]byte, 8192))
@@ -95,7 +100,7 @@ func (s *logScannerJSON) ScanLog() (string, error) {
 	return string(msg), nil
 }
 
-// ScanLogJSONArray scans JSON extracts each array element.
+// ScanLogJSONArray scans a JSON value in the input `io.Reader` and extracts each array element.
 // Note that the output json strings retain whitespace in the input.
 // If the value at `path` is not an array , an error is returned by every call to `ScanLog()`
 // Each call to `ScanLog` will return the next array element and then `io.EOF`.

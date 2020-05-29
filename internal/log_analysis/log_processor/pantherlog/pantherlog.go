@@ -28,15 +28,18 @@ import (
 )
 
 // LogType describes a log type.
-// It provides a method to create a new parser and a schema struct to derive
-// tables from. LogTypes can be grouped in a `Registry` to have an index of available
-// log types.
+// It provides a method to create a new parser and a schema struct to derive tables from.
+// LogTypes can be grouped in a `Registry` to have an index of available log types.
 type LogType struct {
 	Name        string
 	Description string
-	Schema      interface{}
-	NewParser   func() LogParser
-	NewScanner  func(r io.Reader) LogScanner
+	// A struct value that matches the JSON in the results returned by the LogParser.
+	Schema interface{}
+	// Factory for new LogParser instances that return results for this log type.
+	NewParser func() LogParser
+	// Optional definition of a specific method to split a log file into chunks to be processed.
+	// If no value is provided `ScanLogLines()` is used.
+	NewScanner func(r io.Reader) LogScanner
 }
 
 // LogParser is the interface to be used for log entry parsers.
@@ -54,10 +57,14 @@ type LogHandler interface {
 
 // Handler produces a LogHandler that processes the input io.Reader using the log type defined parser
 func (t *LogType) Handler(r io.Reader) LogHandler {
+	return ComposeHandler(t.Scanner(r), t.Parser())
+}
+
+func ComposeHandler(scanner LogScanner, parser LogParser) LogHandler {
 	return &logHandler{
 		results: make(chan *Result),
-		parser:  t.Parser(),
-		scanner: t.Scanner(r),
+		parser:  parser,
+		scanner: scanner,
 	}
 }
 
