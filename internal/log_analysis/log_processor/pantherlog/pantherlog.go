@@ -25,8 +25,6 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
-
-	"github.com/panther-labs/panther/internal/log_analysis/awsglue"
 )
 
 // LogType describes a log type.
@@ -76,11 +74,6 @@ func (t *LogType) Scanner(r io.Reader) LogScanner {
 	return ScanLogLines(r)
 }
 
-// GlueTableMetadata returns metadata about the glue table based on LogType.Schema
-func (t *LogType) GlueTableMetadata() *awsglue.GlueTableMetadata {
-	return awsglue.NewLogTableMetadata(t.Name, t.Description, t.Schema)
-}
-
 // Check verifies a log type is valid
 func (t *LogType) Check() error {
 	if t == nil {
@@ -92,10 +85,6 @@ func (t *LogType) Check() error {
 	if t.Description == "" {
 		return errors.Errorf("missing description for log type %q", t.Name)
 	}
-	// describes Glue table over processed data in S3
-	// assert it does not panic here until some validation method is provided
-	// TODO: [awsglue] Add some validation for the metadata in `awsglue` package
-	_ = awsglue.NewLogTableMetadata(t.Name, t.Description, t.Schema)
 
 	return checkLogEntrySchema(t.Name, t.Schema)
 }
