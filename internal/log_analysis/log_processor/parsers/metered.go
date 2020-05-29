@@ -22,6 +22,8 @@ import (
 	"math"
 	"sync/atomic"
 	"time"
+
+	"github.com/panther-labs/panther/internal/log_analysis/log_processor/pantherlog"
 )
 
 // Stats holds stats for a parser.
@@ -47,7 +49,7 @@ func (s *Stats) AvgParseTimeSeconds() float64 {
 // Metered is a log parser wrapper that keeps track of metrics.
 // Metrics can be retrieved safely from different goroutines.
 type Metered struct {
-	parser            Interface
+	parser            pantherlog.LogParser
 	totalTimeSeconds  AtomicFloat
 	numBytesProcessed AtomicFloat
 	numErrors         AtomicFloat
@@ -67,12 +69,12 @@ func (m *Metered) Stats() Stats {
 }
 
 // Parser returns the wrapped parser
-func (m *Metered) Parser() Interface {
+func (m *Metered) Parser() pantherlog.LogParser {
 	return m.parser
 }
 
 // NewMetered wraps a parser tracking metrics
-func NewMetered(parser Interface) *Metered {
+func NewMetered(parser pantherlog.LogParser) *Metered {
 	// Garbage in, garbage out
 	if parser == nil {
 		return nil
@@ -87,7 +89,7 @@ func NewMetered(parser Interface) *Metered {
 }
 
 // ParseLog implements parsers.Interface
-func (m *Metered) ParseLog(log string) (results []*Result, err error) {
+func (m *Metered) ParseLog(log string) (results []*pantherlog.Result, err error) {
 	tm := time.Now()
 	defer func() {
 		m.numLines.Add(1)

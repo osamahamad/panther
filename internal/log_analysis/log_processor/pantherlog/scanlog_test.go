@@ -1,5 +1,4 @@
-// Package nginxlogs provides parsers for NGINX server logs
-package nginxlogs
+package pantherlog
 
 /**
  * Panther is a Cloud-Native SIEM for the Modern Security Team.
@@ -20,15 +19,39 @@ package nginxlogs
  */
 
 import (
-	"github.com/panther-labs/panther/internal/log_analysis/log_processor/pantherlog"
-	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers"
+	"io"
+	"strings"
+	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
-func init() {
-	pantherlog.MustRegister(pantherlog.LogType{
-		Name:        TypeAccess,
-		Description: AccessDesc,
-		Schema:      Access{},
-		NewParser:   parsers.AdapterFactory(&AccessParser{}),
-	})
+func TestScanLogJSONArray(t *testing.T) {
+	{
+		input := `{"Results":[{"foo":"bar"},{"bar":"baz"},{"baz":"foo"}]}`
+
+		r := strings.NewReader(input)
+		scan := ScanLogJSONArray(r, "Results")
+
+		{
+			r, err := scan.ScanLog()
+			require.NoError(t, err)
+			require.Equal(t, `{"foo":"bar"}`, r)
+		}
+		{
+			r, err := scan.ScanLog()
+			require.NoError(t, err)
+			require.Equal(t, `{"bar":"baz"}`, r)
+		}
+		{
+			r, err := scan.ScanLog()
+			require.NoError(t, err)
+			require.Equal(t, `{"baz":"foo"}`, r)
+		}
+		{
+			r, err := scan.ScanLog()
+			require.Equal(t, io.EOF, err)
+			require.Equal(t, ``, r)
+		}
+	}
 }

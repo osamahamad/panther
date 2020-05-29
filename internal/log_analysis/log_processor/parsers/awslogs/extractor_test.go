@@ -19,12 +19,12 @@ package awslogs
  */
 
 import (
-	"github.com/panther-labs/panther/internal/log_analysis/log_processor/pantherlog"
 	"testing"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/stretchr/testify/require"
 
+	"github.com/panther-labs/panther/internal/log_analysis/log_processor/pantherlog"
 	"github.com/panther-labs/panther/pkg/extract"
 )
 

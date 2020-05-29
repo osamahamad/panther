@@ -19,12 +19,13 @@ package awslogs
  */
 
 import (
-	jsoniter "github.com/json-iterator/go"
-	"github.com/panther-labs/panther/internal/log_analysis/log_processor/pantherlog"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws/arn"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/tidwall/gjson"
+
+	"github.com/panther-labs/panther/internal/log_analysis/log_processor/pantherlog"
 )
 
 // extracts useful AWS features that can be detected generically (w/context)

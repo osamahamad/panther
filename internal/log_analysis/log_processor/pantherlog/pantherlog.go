@@ -1,14 +1,32 @@
 // Package pantherlog defines types and functions to parse logs for Panther
 package pantherlog
 
+/**
+ * Panther is a Cloud-Native SIEM for the Modern Security Team.
+ * Copyright (C) 2020 Panther Labs Inc
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import (
-	"bufio"
 	"context"
-	jsoniter "github.com/json-iterator/go"
-	"github.com/panther-labs/panther/internal/log_analysis/awsglue"
-	"github.com/pkg/errors"
 	"io"
-	"strings"
+
+	jsoniter "github.com/json-iterator/go"
+	"github.com/pkg/errors"
+
+	"github.com/panther-labs/panther/internal/log_analysis/awsglue"
 )
 
 // LogType describes a log type.
@@ -23,14 +41,34 @@ type LogType struct {
 	NewScanner  func(r io.Reader) LogScanner
 }
 
+// LogParser is the interface to be used for log entry parsers.
 type LogParser interface {
 	ParseLog(log string) ([]*Result, error)
 }
 
+// LogHandler is the interface for processing an io.Reader to produce Results
+type LogHandler interface {
+	// Results should return a channel with the processed results
+	Results() <-chan *Result
+	// Run should read until EOF, context.Done() or another parse error occurs.
+	Run(ctx context.Context) error
+}
+
+// Handler produces a LogHandler that processes the input io.Reader using the log type defined parser
+func (t *LogType) Handler(r io.Reader) LogHandler {
+	return &logHandler{
+		results: make(chan *Result),
+		parser:  t.Parser(),
+		scanner: t.Scanner(r),
+	}
+}
+
+// Parser returns a new LogParser instance for this log type
 func (t *LogType) Parser() LogParser {
 	return t.NewParser()
 }
 
+// Scanner returns a new LogScanner instance for this log type
 func (t *LogType) Scanner(r io.Reader) LogScanner {
 	if t.NewScanner != nil {
 		return t.NewScanner(r)
@@ -43,6 +81,7 @@ func (t *LogType) GlueTableMetadata() *awsglue.GlueTableMetadata {
 	return awsglue.NewLogTableMetadata(t.Name, t.Description, t.Schema)
 }
 
+// Check verifies a log type is valid
 func (t *LogType) Check() error {
 	if t == nil {
 		return errors.Errorf("nil log type entry")
@@ -61,76 +100,6 @@ func (t *LogType) Check() error {
 	return checkLogEntrySchema(t.Name, t.Schema)
 }
 
-// ParserFactory creates a new parser instance.
-type ParserFactory func() LogParser
-
-type LogScanner interface {
-	ScanLog() (string, error)
-}
-
-func ScanLogLines(r io.Reader) LogScanner {
-	if r, ok := r.(*bufio.Reader); ok {
-		return &logScannerLines{
-			r: r,
-		}
-	}
-	return &logScannerLines{
-		r: bufio.NewReader(r),
-	}
-}
-
-type logScannerLines struct {
-	r         *bufio.Reader
-	numLines  int64
-	totalSize int64
-}
-
-func (s *logScannerLines) ScanLog() (string, error) {
-	b := strings.Builder{}
-	if s.numLines != 0 {
-		// Pre-allocate to average line size
-		size := s.totalSize / s.numLines
-		b.Grow(int(size))
-	}
-	for {
-		line, isPrefix, err := s.r.ReadLine()
-		s.totalSize += int64(len(line))
-		b.Write(line)
-		if err != nil {
-			return b.String(), err
-		}
-		if isPrefix {
-			continue
-		}
-		s.numLines++
-		return b.String(), nil
-	}
-}
-
-func ScanLogJSON(r io.Reader) LogScanner {
-	iter := jsoniter.ConfigFastest.BorrowIterator(nil)
-	iter.Reset(r)
-	return &logScannerJSON{
-		iter: iter,
-	}
-}
-
-type logScannerJSON struct {
-	iter *jsoniter.Iterator
-	msg  jsoniter.RawMessage
-}
-
-func (s *logScannerJSON) ScanLog() (string, error) {
-	if err := s.iter.Error; err != nil {
-		return "", err
-	}
-	s.iter.ReadVal(&s.msg)
-	if err := s.iter.Error; err != nil {
-		return "", err
-	}
-	return string(s.msg), nil
-}
-
 func checkLogEntrySchema(logType string, schema interface{}) error {
 	if schema == nil {
 		return errors.Errorf("nil schema for log type %q", logType)
@@ -147,11 +116,6 @@ func checkLogEntrySchema(logType string, schema interface{}) error {
 	return nil
 }
 
-type LogHandler interface {
-	Results() <-chan *Result
-	Run(ctx context.Context) error
-}
-
 type logHandler struct {
 	results chan *Result
 	parser  LogParser
@@ -159,6 +123,8 @@ type logHandler struct {
 	ctx     context.Context
 }
 
+// Run should start reading log entries from a reader and produce results to the channel.
+// It should end with ctx.Err() if the context ends before completion.
 func (h *logHandler) Run(ctx context.Context) error {
 	if h.ctx != nil {
 		return errors.New("already running")
@@ -170,6 +136,10 @@ func (h *logHandler) Run(ctx context.Context) error {
 	for {
 		log, err := h.scanner.ScanLog()
 		if err != nil {
+			// EOF ends the goroutine without errors
+			if err == io.EOF {
+				return nil
+			}
 			return err
 		}
 		results, err := h.parser.ParseLog(log)
@@ -186,14 +156,7 @@ func (h *logHandler) Run(ctx context.Context) error {
 	}
 }
 
+// Results returns the results from parsing the input io.Reader
 func (h *logHandler) Results() <-chan *Result {
 	return h.results
-}
-
-func (t *LogType) Handler(r io.Reader) LogHandler {
-	return &logHandler{
-		results: make(chan *Result, 0),
-		parser:  t.Parser(),
-		scanner: t.Scanner(r),
-	}
 }

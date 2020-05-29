@@ -1,6 +1,9 @@
 package gitlablogs
 
-import "github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers"
+import (
+	"github.com/panther-labs/panther/internal/log_analysis/log_processor/pantherlog"
+	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers"
+)
 
 /**
  * Panther is a Cloud-Native SIEM for the Modern Security Team.
@@ -26,37 +29,37 @@ import "github.com/panther-labs/panther/internal/log_analysis/log_processor/pars
 const PantherPrefix = "GitLab"
 
 var (
-	LogTypeExceptions = parsers.LogType{
+	LogTypeExceptions = pantherlog.LogType{
 		Name:        TypeExceptions,
 		Description: ExceptionsDesc,
 		Schema:      Exceptions{},
 		NewParser:   parsers.AdapterFactory(&ExceptionsParser{}),
 	}
-	LogTypeAPI = parsers.LogType{
+	LogTypeAPI = pantherlog.LogType{
 		Name:        TypeAPI,
 		Description: APIDesc,
 		Schema:      API{},
 		NewParser:   parsers.AdapterFactory(&APIParser{}),
 	}
-	LogTypeIntegrations = parsers.LogType{
+	LogTypeIntegrations = pantherlog.LogType{
 		Name:        TypeIntegrations,
 		Description: IntegrationsDesc,
 		Schema:      Integrations{},
 		NewParser:   parsers.AdapterFactory(&IntegrationsParser{}),
 	}
-	LogTypeAudit = parsers.LogType{
+	LogTypeAudit = pantherlog.LogType{
 		Name:        TypeAudit,
 		Description: AuditDesc,
 		Schema:      Audit{},
 		NewParser:   parsers.AdapterFactory(&AuditParser{}),
 	}
-	LogTypeGit = parsers.LogType{
+	LogTypeGit = pantherlog.LogType{
 		Name:        TypeGit,
 		Description: GitDesc,
 		Schema:      Git{},
 		NewParser:   parsers.AdapterFactory(&GitParser{}),
 	}
-	LogTypeRails = parsers.LogType{
+	LogTypeRails = pantherlog.LogType{
 		Name:        TypeRails,
 		Description: RailsDesc,
 		Schema:      Rails{},
@@ -65,7 +68,7 @@ var (
 )
 
 func init() {
-	parsers.MustRegister(
+	pantherlog.MustRegister(
 		LogTypeAPI,
 		LogTypeAudit,
 		LogTypeExceptions,

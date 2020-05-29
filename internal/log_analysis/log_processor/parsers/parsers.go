@@ -43,7 +43,20 @@ var Validator = validator.New()
 // JSON re-exports pantherlog.JSON
 var JSON = pantherlog.JSON
 
-type Interface pantherlog.LogParser
+// AdapterFactory returns a pantherlog.LogParser factory from a parsers.Parser
+// This is used to ease transition to the new pantherlog.LogType registry.
+func AdapterFactory(parser LogParser) func() pantherlog.LogParser {
+	return func() pantherlog.LogParser {
+		return NewAdapter(parser)
+	}
+}
+
+// NewAdapter creates a pantherlog.LogParser from a parsers.Parser
+func NewAdapter(parser LogParser) pantherlog.LogParser {
+	return &logParserAdapter{
+		LogParser: parser.New(),
+	}
+}
 
 type logParserAdapter struct {
 	LogParser
@@ -63,18 +76,4 @@ func (a *logParserAdapter) ParseLog(log string) ([]*pantherlog.Result, error) {
 		results[i] = result
 	}
 	return results, nil
-}
-
-func NewAdapter(parser LogParser) Interface {
-	return &logParserAdapter{
-		LogParser: parser.New(),
-	}
-}
-
-func AdapterFactory(parser LogParser) func() Interface {
-	return func() Interface {
-		return &logParserAdapter{
-			LogParser: parser.New(),
-		}
-	}
 }

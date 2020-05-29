@@ -19,8 +19,11 @@ package awslogs
  */
 
 import (
+	"io"
+
 	jsoniter "github.com/json-iterator/go"
 
+	"github.com/panther-labs/panther/internal/log_analysis/log_processor/pantherlog"
 	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers"
 	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers/timestamp"
 	"github.com/panther-labs/panther/pkg/extract"
@@ -186,4 +189,10 @@ func (event *CloudTrail) updatePantherFields(p *CloudTrailParser) {
 
 		extract.Extract(event.UserIdentity.SessionContext.WebIDFederationData.Attributes, awsExtractor)
 	}
+}
+
+// NewCloudTrailLogScanner scans a cloud trail log file for CloudTrail records in the `Records` field.
+// This opens the way for the parser to handle one record at a time for low memory averhead.
+func NewCloudTrailLogScanner(r io.Reader) pantherlog.LogScanner {
+	return pantherlog.ScanLogJSONArray(r, `Results`)
 }

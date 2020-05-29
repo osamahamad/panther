@@ -19,11 +19,12 @@ package awslogs
  */
 
 import (
-	"github.com/aws/aws-sdk-go/aws/arn"
-	"github.com/panther-labs/panther/internal/log_analysis/log_processor/pantherlog"
 	"regexp"
 	"strings"
 
+	"github.com/aws/aws-sdk-go/aws/arn"
+
+	"github.com/panther-labs/panther/internal/log_analysis/log_processor/pantherlog"
 	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers"
 )
 
@@ -182,6 +183,7 @@ func (*scanARN) ScanValues(values []pantherlog.Value, input string) ([]pantherlo
 	return values, nil
 }
 
+// nolint:lll
 type Meta struct {
 	pantherlog.Meta
 	PantherAnyAWSAccountIds  []string `json:"p_any_aws_account_ids,omitempty" description:"Panther added field with collection of aws account ids associated with the row"`

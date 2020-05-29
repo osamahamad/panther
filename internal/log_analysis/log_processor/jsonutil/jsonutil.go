@@ -54,3 +54,18 @@ func (extension *encoderNamingStrategy) UpdateStructDescriptor(structDescriptor 
 		}
 	}
 }
+
+func StripWhitespace(data []byte) ([]byte, error) {
+	msg := jsoniter.RawMessage(make([]byte, 0, len(data)))
+	if err := jsoniter.ConfigDefault.Unmarshal(data, &msg); err != nil {
+		return nil, err
+	}
+	return msg, nil
+}
+func StripWhitespaceString(data string) (string, error) {
+	msg := jsoniter.RawMessage(make([]byte, 0, len(data)))
+	if err := jsoniter.ConfigDefault.UnmarshalFromString(data, &msg); err != nil {
+		return "", err
+	}
+	return string(msg), nil
+}

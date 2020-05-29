@@ -1,5 +1,4 @@
-// Package nginxlogs provides parsers for NGINX server logs
-package nginxlogs
+package jsonutil
 
 /**
  * Panther is a Cloud-Native SIEM for the Modern Security Team.
@@ -20,15 +19,21 @@ package nginxlogs
  */
 
 import (
-	"github.com/panther-labs/panther/internal/log_analysis/log_processor/pantherlog"
-	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers"
+	"testing"
+
+	jsoniter "github.com/json-iterator/go"
+	"github.com/stretchr/testify/require"
 )
 
-func init() {
-	pantherlog.MustRegister(pantherlog.LogType{
-		Name:        TypeAccess,
-		Description: AccessDesc,
-		Schema:      Access{},
-		NewParser:   parsers.AdapterFactory(&AccessParser{}),
-	})
+func TestSeek(t *testing.T) {
+	{
+		input := `
+{"Results":[{"foo":"bar"}]}
+{"Results":null}`
+		iter := jsoniter.ConfigFastest.BorrowIterator([]byte(input))
+		depth := Seek(iter, "Results", "0", "foo")
+		require.NoError(t, iter.Error)
+		require.Equal(t, depth, 3)
+		require.Equal(t, "bar", iter.ReadString())
+	}
 }
