@@ -31,6 +31,8 @@ import (
 	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers/timestamp"
 )
 
+const TypeVPCFlow = "AWS.VPCFlow"
+
 var VPCFlowDesc = `VPCFlow is a VPC NetFlow log, which is a layer 3 representation of network traffic in EC2.
 Log format & samples can be seen here: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-records-examples.html`
 
@@ -162,7 +164,7 @@ func (p *VPCFlowParser) Parse(log string) ([]*parsers.PantherLog, error) {
 
 // LogType returns the log type supported by this parser
 func (p *VPCFlowParser) LogType() string {
-	return "AWS.VPCFlow"
+	return TypeVPCFlow
 }
 
 func (p *VPCFlowParser) isVpcFlowHeader(log string) bool {

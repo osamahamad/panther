@@ -25,6 +25,8 @@ import (
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+const TypeCloudTrailInsight = "AWS.CloudTrailInsight"
+
 var CloudTrailInsightDesc = `AWSCloudTrailInsight represents the content of a CloudTrail Insight event record S3 object.
 Log format & samples can be seen here: https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference.html`
 
@@ -109,7 +111,7 @@ func (p *CloudTrailInsightParser) Parse(log string) ([]*parsers.PantherLog, erro
 
 // LogType returns the log type supported by this parser
 func (p *CloudTrailInsightParser) LogType() string {
-	return "AWS.CloudTrailInsight"
+	return TypeCloudTrailInsight
 }
 
 func (event *CloudTrailInsight) updatePantherFields(p *CloudTrailInsightParser) {

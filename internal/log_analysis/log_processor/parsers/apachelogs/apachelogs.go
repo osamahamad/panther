@@ -25,7 +25,25 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+
+	"github.com/panther-labs/panther/internal/log_analysis/log_processor/pantherlog"
+	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers"
 )
+
+func init() {
+	pantherlog.MustRegister(pantherlog.LogType{
+		Name:        TypeAccessCombined,
+		Description: AccessCombinedDesc,
+		Schema:      AccessCombined{},
+		NewParser:   parsers.AdapterFactory(NewAccessCombinedParser()),
+	})
+	pantherlog.MustRegister(pantherlog.LogType{
+		Name:        TypeAccessCommon,
+		Description: AccessCommonDesc,
+		Schema:      AccessCommon{},
+		NewParser:   parsers.AdapterFactory(NewAccessCommonParser()),
+	})
+}
 
 // 	[day/month/year:hour:minute:second zone]
 // day = 2*digit

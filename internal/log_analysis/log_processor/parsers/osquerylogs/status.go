@@ -26,6 +26,8 @@ import (
 	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers/timestamp"
 )
 
+const TypeStatus = "Osquery.Status"
+
 var StatusDesc = `Status is a diagnostic osquery log about the daemon.
 Reference: https://osquery.readthedocs.io/en/stable/deployment/logging/`
 
@@ -80,7 +82,7 @@ func (p *StatusParser) Parse(log string) ([]*parsers.PantherLog, error) {
 
 // LogType returns the log type supported by this parser
 func (p *StatusParser) LogType() string {
-	return "Osquery.Status"
+	return TypeStatus
 }
 
 func (event *Status) updatePantherFields(p *StatusParser) {

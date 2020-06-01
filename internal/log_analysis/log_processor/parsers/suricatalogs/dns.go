@@ -27,6 +27,8 @@ import (
 	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers/timestamp"
 )
 
+const TypeDNS = "Suricata.DNS"
+
 var DNSDesc = `Suricata parser for the DNS event type in the EVE JSON output.
 Reference: https://suricata.readthedocs.io/en/suricata-5.0.2/output/eve/eve-json-output.html#dns`
 
@@ -124,7 +126,7 @@ func (p *DNSParser) Parse(log string) ([]*parsers.PantherLog, error) {
 
 // LogType returns the log type supported by this parser
 func (p *DNSParser) LogType() string {
-	return "Suricata.DNS"
+	return TypeDNS
 }
 
 func (event *DNS) updatePantherFields(p *DNSParser) {

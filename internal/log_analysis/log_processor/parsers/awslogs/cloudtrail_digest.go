@@ -25,6 +25,8 @@ import (
 	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers/timestamp"
 )
 
+const TypeCloudTrailDigest = "AWS.CloudTrailDigest"
+
 // CloudTrailDigestDesc describes a cloud trail digest log
 // nolint:lll
 var CloudTrailDigestDesc = `AWSCloudTrailDigest contains the names of the log files that were delivered to your Amazon S3 bucket during the last hour, the hash values for those log files, and the signature of the previous digest file. 
@@ -89,7 +91,7 @@ func (p *CloudTrailDigestParser) Parse(log string) ([]*parsers.PantherLog, error
 
 // LogType returns the log type supported by this parser
 func (p *CloudTrailDigestParser) LogType() string {
-	return "AWS.CloudTrailDigest"
+	return TypeCloudTrailDigest
 }
 
 func (event *CloudTrailDigest) updatePantherFields(p *CloudTrailDigestParser) {

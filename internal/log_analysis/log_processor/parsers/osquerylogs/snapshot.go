@@ -26,6 +26,8 @@ import (
 	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers/timestamp"
 )
 
+const TypeSnapshot = "Osquery.Snapshot"
+
 var SnapshotDesc = `Snapshot contains all the data included in OsQuery differential logs
 Reference: https://osquery.readthedocs.io/en/stable/deployment/logging/`
 
@@ -72,7 +74,7 @@ func (p *SnapshotParser) Parse(log string) ([]*parsers.PantherLog, error) {
 
 // LogType returns the log type supported by this parser
 func (p *SnapshotParser) LogType() string {
-	return "Osquery.Snapshot"
+	return TypeSnapshot
 }
 
 func (event *Snapshot) updatePantherFields(p *SnapshotParser) {

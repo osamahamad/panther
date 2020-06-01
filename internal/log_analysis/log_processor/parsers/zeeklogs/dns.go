@@ -25,6 +25,8 @@ import (
 	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers/timestamp"
 )
 
+const TypeZeekDNS = "Zeek.DNS"
+
 var ZeekDNSDesc = `Zeek DNS activity
 Reference: https://docs.zeek.org/en/current/scripts/base/protocols/dns/main.zeek.html#type-DNS::Info`
 
@@ -91,7 +93,7 @@ func (p *ZeekDNSParser) Parse(log string) ([]*parsers.PantherLog, error) {
 
 // LogType returns the log type supported by this parser
 func (p *ZeekDNSParser) LogType() string {
-	return "Zeek.DNS"
+	return TypeZeekDNS
 }
 
 func (event *ZeekDNS) updatePantherFields(p *ZeekDNSParser) {

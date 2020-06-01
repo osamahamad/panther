@@ -1,3 +1,4 @@
+// Package gcplogs has log parsers for Google Cloud Platform
 package gcplogs
 
 /**
@@ -21,11 +22,22 @@ package gcplogs
 import (
 	"strings"
 
+	"github.com/panther-labs/panther/internal/log_analysis/log_processor/pantherlog"
+	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers"
 	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers/numerics"
 	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers/timestamp"
 )
 
-// Package gcplogs has log parsers for Google Cloud Platform
+func init() {
+	pantherlog.MustRegister(
+		pantherlog.LogType{
+			Name:        TypeAuditLog,
+			Description: AuditLogDesc,
+			Schema:      AuditLog{},
+			NewParser:   parsers.AdapterFactory(&AuditLogParser{}),
+		},
+	)
+}
 
 // nolint:lll
 type LogEntry struct {

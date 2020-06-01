@@ -26,6 +26,8 @@ import (
 	"github.com/panther-labs/panther/pkg/extract"
 )
 
+const TypeGuardDuty = "AWS.GuardDuty"
+
 var GuardDutyDesc = `Amazon GuardDuty is a threat detection service that continuously monitors for malicious activity 
 and unauthorized behavior inside AWS Accounts. 
 See also GuardDuty Finding Format : https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_finding-format.html`
@@ -90,7 +92,7 @@ func (p *GuardDutyParser) Parse(log string) ([]*parsers.PantherLog, error) {
 
 // LogType returns the log type supported by this parser
 func (p *GuardDutyParser) LogType() string {
-	return "AWS.GuardDuty"
+	return TypeGuardDuty
 }
 
 func (event *GuardDuty) updatePantherFields(p *GuardDutyParser) {

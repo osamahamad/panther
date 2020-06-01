@@ -26,6 +26,8 @@ import (
 	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers/timestamp"
 )
 
+const TypeDifferential = "Osquery.Differential"
+
 var DifferentialDesc = `Differential contains all the data included in OsQuery differential logs
 Reference: https://osquery.readthedocs.io/en/stable/deployment/logging/`
 
@@ -82,7 +84,7 @@ func (p *DifferentialParser) Parse(log string) ([]*parsers.PantherLog, error) {
 
 // LogType returns the log type supported by this parser
 func (p *DifferentialParser) LogType() string {
-	return "Osquery.Differential"
+	return TypeDifferential
 }
 
 func (event *Differential) updatePantherFields(p *DifferentialParser) {

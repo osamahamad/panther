@@ -29,6 +29,8 @@ import (
 	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers/timestamp"
 )
 
+const TypeRFC3164 = "Syslog.RFC3164"
+
 var RFC3164Desc = `Syslog parser for the RFC3164 format (ie. BSD-syslog messages)
 Reference: https://tools.ietf.org/html/rfc3164`
 
@@ -101,7 +103,7 @@ func (p *RFC3164Parser) Parse(log string) ([]*parsers.PantherLog, error) {
 
 // LogType returns the log type supported by this parser
 func (p *RFC3164Parser) LogType() string {
-	return "Syslog.RFC3164"
+	return TypeRFC3164
 }
 
 func (event *RFC3164) updatePantherFields(p *RFC3164Parser) {
