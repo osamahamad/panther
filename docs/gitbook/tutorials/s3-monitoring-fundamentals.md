@@ -140,7 +140,7 @@ Alternatively, you may use S3 Server Access logging, which provides a slightly d
 
 To configure S3 Access Logging, you’ll need a bucket to receive the data in _each region_ where your buckets exist.
 
-![S3 Access Logging Layout](../.gitbook/assets/tutorials/s3-access-logging-layout.jpg)
+![S3 Access Logging Layout](https://github.com/panther-labs/panther/blob/v1.3.0-docs/docs/img/s3-access-logging-layout.jpg)
 
 Use the template below to create the bucket for receiving data:
 
@@ -355,7 +355,7 @@ GROUP BY requester, httpstatus, errorcode
 ORDER BY err_count DESC
 ```
 
-![S3 Error Query](../.gitbook/assets/tutorials/s3-error-query.png)
+![S3 Error Query](https://github.com/panther-labs/panther/blob/v1.3.0-docs/docs/img/s3-error-query.png)
 
 The output of this search can be incorporated into your Python rule above to ensure the output does not have too many results for certain patterns.
 
