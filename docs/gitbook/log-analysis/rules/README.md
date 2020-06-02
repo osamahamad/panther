@@ -74,7 +74,7 @@ The Python body MAY:
 * Define a `dedup` function that accepts one argument and returns a `string`
 * Define a `title` function that accepts one argument and returns a `string`
 
-Using the schemas in [supported logs](../log-processing/supported-logs) provides details on all available fields in events. When accessing event fields, it's recommend to always use `.get()` since empty key/values are omitted from the event.
+Using the schemas in [supported logs](https://github.com/panther-labs/panther/tree/v1.3.0-docs/docs/gitbook/log-analysis/log-processing/supported-logs) provides details on all available fields in events. When accessing event fields, it's recommend to always use `.get()` since empty key/values are omitted from the event.
 
 #### Example Rule
 
