@@ -49,7 +49,7 @@ By default, rules are pre-installed from Panther's [open-source packs](https://g
 
 Panther rules can be written, tested, and deployed either with the UI or the [panther_analysis_tool](https://github.com/panther-labs/panther_analysis_tool) CLI utility.
 
-Each rule takes an `event` input of a given log type from the [supported logs](https://github.com/panther-labs/panther/tree/v1.3.0-docs/docs/gitbook/log-analysis/log-processing/supported-logs) page.
+Each rule takes an `event` input of a given log type from the [supported logs](https://docs.runpanther.io/v/v1.3.0-docs/supported-logs) page.
 
 ### Rule Body
 
@@ -74,7 +74,7 @@ The Python body MAY:
 * Define a `dedup` function that accepts one argument and returns a `string`
 * Define a `title` function that accepts one argument and returns a `string`
 
-Using the schemas in [supported logs](https://github.com/panther-labs/panther/tree/v1.3.0-docs/docs/gitbook/log-analysis/log-processing/supported-logs) provides details on all available fields in events. When accessing event fields, it's recommend to always use `.get()` since empty key/values are omitted from the event.
+Using the schemas in [supported logs](https://docs.runpanther.io/v/v1.3.0-docs/supported-logs) provides details on all available fields in events. When accessing event fields, it's recommend to always use `.get()` since empty key/values are omitted from the event.
 
 #### Example Rule
 
