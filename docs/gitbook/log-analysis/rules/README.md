@@ -49,7 +49,7 @@ By default, rules are pre-installed from Panther's [open-source packs](https://g
 
 Panther rules can be written, tested, and deployed either with the UI or the [panther_analysis_tool](https://github.com/panther-labs/panther_analysis_tool) CLI utility.
 
-Each rule takes an `event` input of a given log type from the [supported logs](../log-processing/supported-logs) page.
+Each rule takes an `event` input of a given log type from the [supported logs](https://github.com/panther-labs/panther/tree/v1.3.0-docs/docs/gitbook/log-analysis/log-processing/supported-logs) page.
 
 ### Rule Body
 
