@@ -25,6 +25,9 @@ import (
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
+
+	"github.com/panther-labs/panther/api/lambda/core/log_analysis/log_processor/models"
+	"github.com/panther-labs/panther/internal/log_analysis/awsglue"
 )
 
 // LogType describes a log type.
@@ -39,12 +42,17 @@ type LogType struct {
 	NewParser func() LogParser
 	// Optional definition of a specific method to split a log file into chunks to be processed.
 	// If no value is provided `ScanLogLines()` is used.
-	NewScanner func(r io.Reader) LogScanner
+	NewScanner        func(r io.Reader) LogScanner
+	glueTableMetadata *awsglue.GlueTableMetadata
 }
 
 // LogParser is the interface to be used for log entry parsers.
 type LogParser interface {
 	ParseLog(log string) ([]*Result, error)
+}
+
+func (t *LogType) GlueTableMetadata() *awsglue.GlueTableMetadata {
+	return t.glueTableMetadata
 }
 
 // LogHandler is the interface for processing an io.Reader to produce Results
@@ -92,6 +100,8 @@ func (t *LogType) Check() error {
 	if t.Description == "" {
 		return errors.Errorf("missing description for log type %q", t.Name)
 	}
+
+	t.glueTableMetadata = awsglue.NewGlueTableMetadata(models.LogData, t.Name, t.Description, awsglue.GlueTableHourly, t.Schema)
 
 	return checkLogEntrySchema(t.Name, t.Schema)
 }

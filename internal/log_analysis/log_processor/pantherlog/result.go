@@ -19,7 +19,7 @@ package pantherlog
  */
 
 import (
-	"strings"
+	"github.com/panther-labs/panther/internal/log_analysis/awsglue"
 	"time"
 
 	jsoniter "github.com/json-iterator/go"
@@ -83,25 +83,7 @@ var JSON = func() jsoniter.API {
 		SortMapKeys: false,
 	}
 	api := config.Froze()
-	rewriteFields := jsonutil.NewEncoderNamingStrategy(RewriteFieldName)
+	rewriteFields := jsonutil.NewEncoderNamingStrategy(awsglue.RewriteFieldName)
 	api.RegisterExtension(rewriteFields)
 	return api
 }()
-
-// TODO: [pantherlog] Add more mappings of invalid Athena field name characters here
-// NOTE: The mapping should be easy to remember (so no ASCII code etc) and complex enough
-// to avoid possible conflicts with other fields.
-var fieldNameReplacer = strings.NewReplacer(
-	"@", "_at_sign_",
-	",", "_comma_",
-	"`", "_backtick_",
-	"'", "_apostrophe_",
-)
-
-func RewriteFieldName(name string) string {
-	result := fieldNameReplacer.Replace(name)
-	if result == name {
-		return name
-	}
-	return strings.Trim(result, "_")
-}

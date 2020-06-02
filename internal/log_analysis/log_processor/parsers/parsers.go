@@ -43,8 +43,6 @@ var Validator = validator.New()
 // JSON re-exports pantherlog.JSON
 var JSON = pantherlog.JSON
 
-var RewriteFieldName = pantherlog.RewriteFieldName
-
 // AdapterFactory returns a pantherlog.LogParser factory from a parsers.Parser
 // This is used to ease transition to the new pantherlog.LogType registry.
 func AdapterFactory(parser LogParser) func() pantherlog.LogParser {
