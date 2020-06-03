@@ -21,3 +21,6 @@ keys/
 # Terraform
 .terraform
 terraform.tfstate*
+
+# Temporary file produced by mage
+mage_output_file.go
