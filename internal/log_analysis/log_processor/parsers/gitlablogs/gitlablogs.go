@@ -59,11 +59,11 @@ var (
 		Schema:      Git{},
 		NewParser:   parsers.AdapterFactory(&GitParser{}),
 	}
-	LogTypeRails = pantherlog.LogType{
-		Name:        TypeRails,
-		Description: RailsDesc,
-		Schema:      Rails{},
-		NewParser:   parsers.AdapterFactory(&RailsParser{}),
+	LogTypeProduction = pantherlog.LogType{
+		Name:        TypeProduction,
+		Description: ProductionDesc,
+		Schema:      Production{},
+		NewParser:   parsers.AdapterFactory(&ProductionParser{}),
 	}
 )
 
@@ -74,6 +74,6 @@ func init() {
 		LogTypeExceptions,
 		LogTypeGit,
 		LogTypeIntegrations,
-		LogTypeRails,
+		LogTypeProduction,
 	)
 }
