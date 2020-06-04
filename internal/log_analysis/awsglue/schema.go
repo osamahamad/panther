@@ -48,7 +48,6 @@ func RegisterMapping(x interface{}, glueType string) {
 		From: from,
 		To:   glueType,
 	})
-
 }
 
 var (

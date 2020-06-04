@@ -288,3 +288,18 @@ func (pl *PantherLog) Results() ([]*pantherlog.Result, error) {
 	}
 	return []*pantherlog.Result{result}, nil
 }
+
+func ToResults(logs []*PantherLog, err error) ([]*pantherlog.Result, error) {
+	if err != nil {
+		return nil, err
+	}
+	results := make([]*pantherlog.Result, len(logs))
+	for i := range results {
+		result, err := logs[i].Result()
+		if err != nil {
+			return nil, err
+		}
+		results[i] = result
+	}
+	return results, nil
+}

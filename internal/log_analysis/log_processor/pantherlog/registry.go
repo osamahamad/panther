@@ -65,6 +65,16 @@ func (r *Registry) LogTypes() (logTypes []LogType) {
 	return
 }
 
+func (r *Registry) Del(name string) *LogType {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if logType, ok := r.entries[name]; ok {
+		delete(r.entries, name)
+		return logType
+	}
+	return nil
+}
+
 func (r *Registry) Register(entry LogType) error {
 	if err := entry.Check(); err != nil {
 		return err

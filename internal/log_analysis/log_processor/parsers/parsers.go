@@ -60,20 +60,9 @@ func NewAdapter(parser LogParser) pantherlog.LogParser {
 
 type logParserAdapter struct {
 	LogParser
+	//classification.LogParserMarker
 }
 
 func (a *logParserAdapter) ParseLog(log string) ([]*pantherlog.Result, error) {
-	logs, err := a.LogParser.Parse(log)
-	if err != nil {
-		return nil, err
-	}
-	results := make([]*pantherlog.Result, len(logs))
-	for i := range results {
-		result, err := logs[i].Result()
-		if err != nil {
-			return nil, err
-		}
-		results[i] = result
-	}
-	return results, nil
+	return ToResults(a.LogParser.Parse(log))
 }

@@ -19,10 +19,10 @@ package destinations
  */
 
 import (
-	"github.com/panther-labs/panther/internal/log_analysis/log_processor/parsers"
+	"github.com/panther-labs/panther/internal/log_analysis/log_processor/pantherlog"
 )
 
 // Destination defines the interface that all Destinations should follow
 type Destination interface {
-	SendEvents(parsedEventChannel chan *parsers.PantherLog, errChan chan error)
+	SendEvents(parsedEventChannel chan *pantherlog.Result, errChan chan error)
 }

@@ -28,7 +28,7 @@ func init() {
 		pantherlog.LogType{
 			Name:        TypeZeekDNS,
 			Description: ZeekDNSDesc,
-			Schema:      ZeekDNS{},
+			Schema:      &ZeekDNS{},
 			NewParser:   parsers.AdapterFactory(&ZeekDNSParser{}),
 		})
 }

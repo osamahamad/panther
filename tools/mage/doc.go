@@ -127,7 +127,7 @@ func logDocs() error {
 
 		// use html table to get needed control
 		for _, logType := range logTypes {
-			table := registry.AvailableParsers().LookupParser(logType).GlueTableMetadata
+			table := registry.Lookup(logType).GlueTableMetadata()
 
 			description := html.EscapeString(table.Description())
 
