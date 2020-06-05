@@ -22,5 +22,5 @@ keys/
 .terraform
 terraform.tfstate*
 
-# Temporary file produced by mage
+# Omit mage temporary file that can be left at root path if mage does not exit gracefully.
 mage_output_file.go
